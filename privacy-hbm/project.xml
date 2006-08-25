@@ -3,9 +3,9 @@
 <project>
     <pomVersion>3</pomVersion>
     <extend>../../master/project.xml</extend>
-    <name>Sakai Privacy Component Impl</name>
+    <name>Sakai Privacy HBM</name>
     <groupId>sakaiproject</groupId>
-    <id>sakai-privacy-impl</id>
+    <id>sakai-privacy-hbm</id>
   	<currentVersion>${sakai.version}</currentVersion>
     <organization>
         <name>Sakai Project</name>
@@ -15,32 +15,15 @@
 
 	  <properties>
 		  <deploy.type>jar</deploy.type>
+		  <deploy.target>shared</deploy.target>
 	  </properties>
 
     <dependencies>
 	    <dependency>
   	  		<groupId>sakaiproject</groupId>
         	<artifactId>sakai-privacy-api</artifactId>
-			    <version>${sakai.version}</version>
+			<version>${sakai.version}</version>
     	</dependency>
-
-	    <dependency>
-  	  		<groupId>sakaiproject</groupId>
-        	<artifactId>sakai-privacy-hbm</artifactId>
-     			<version>${sakai.version}</version>
-    	</dependency>
-
-  		<dependency>
-  			<groupId>${sakai.hibernate.groupId}</groupId>
-  			<artifactId>${sakai.hibernate.artifactId}</artifactId>
-	  		<version>${sakai.hibernate.version}</version>
-  		</dependency>
-  		
-	  	<dependency>
-  			<groupId>${sakai.spring.groupId}</groupId>
-			  <artifactId>${sakai.spring.artifactId}</artifactId>
-			  <version>${sakai.spring.version}</version>			
-  		</dependency>
 
 	  </dependencies>
 
@@ -48,15 +31,13 @@
 
       <sourceDirectory>src/java</sourceDirectory>
 
-        <resources>
-
+      <resources>
           <resource>
-            <directory>${basedir}/src/bundle</directory>
+            <directory>src/java</directory>
               <includes>
-                <include>**/*.properties</include>
+                <include>**/*.xml</include>
               </includes>
           </resource>
-
       </resources>     
       
     </build>
