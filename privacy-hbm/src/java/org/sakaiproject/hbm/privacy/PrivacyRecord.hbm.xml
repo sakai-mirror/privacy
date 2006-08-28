@@ -31,5 +31,12 @@
   <query name="findPrivacyByUserIdContextIdType">
     <![CDATA[from org.sakaiproject.hbm.privacy.PrivacyRecordImpl as privacy where privacy.userId = :userId and privacy.contextId = :contextId and privacy.recordType = :recordType]]>
   </query>
+
+  <query name="findDisabledPrivacyUserIdContextIdType">
+    <![CDATA[from org.sakaiproject.hbm.privacy.PrivacyRecordImpl as privacy where privacy.userId = :userId and privacy.contextId = :contextId and privacy.recordType = :recordType and privacy.viewable = :viewable]]>
+  </query>
   
+  <query name="finalPrivacyByContextViewableType">
+    <![CDATA[from org.sakaiproject.hbm.privacy.PrivacyRecordImpl as privacy where privacy.contextId = :contextId and privacy.viewable = :viewable and privacy.recordType = :recordType]]>  
+  </query>
 </hibernate-mapping>

@@ -10,6 +10,11 @@ public class PrivacyRecordImpl implements PrivacyRecord
 	private String recordType;
 	private String userId;
 	private boolean viewable;
+	
+	public PrivacyRecordImpl()
+	{
+		
+	}
 
 	public PrivacyRecordImpl(String userId, String contextId, String recordType, boolean viewable)
 	{

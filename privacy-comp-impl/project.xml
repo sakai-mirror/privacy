@@ -29,7 +29,7 @@
         	<artifactId>sakai-privacy-hbm</artifactId>
      			<version>${sakai.version}</version>
     	</dependency>
-
+    	
   		<dependency>
   			<groupId>${sakai.hibernate.groupId}</groupId>
   			<artifactId>${sakai.hibernate.artifactId}</artifactId>
@@ -41,23 +41,27 @@
 			  <artifactId>${sakai.spring.artifactId}</artifactId>
 			  <version>${sakai.spring.version}</version>			
   		</dependency>
-
+  		
+  		<dependency>
+	  		<groupId>commons-logging</groupId>
+		  	<artifactId>commons-logging</artifactId>
+			  <version>1.0.4</version>
+		  </dependency>
+      
 	  </dependencies>
 
     <build>
 
       <sourceDirectory>src/java</sourceDirectory>
 
-        <resources>
-
-          <resource>
-            <directory>${basedir}/src/bundle</directory>
-              <includes>
-                <include>**/*.properties</include>
-              </includes>
-          </resource>
-
+      <resources>
+        <resource>
+          <directory>${basedir}/src/bundle</directory>
+            <includes>
+              <include>**/*.properties</include>
+            </includes>
+        </resource>
       </resources>     
-      
+
     </build>
 </project>
