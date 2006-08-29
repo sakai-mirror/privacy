@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Iterator;
 import java.util.HashSet;
+import java.util.HashMap;
 
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
@@ -24,6 +25,7 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
 	private static final String QUERY_BY_USERID_CONTEXTID_TYPEID = "findPrivacyByUserIdContextIdType";
 	private static final String QUERY_BY_DISABLED_USERID_CONTEXTID = "findDisabledPrivacyUserIdContextIdType";
 	private static final String QUERY_BY_CONTEXT_VIEWABLE_TYPE = "finalPrivacyByContextViewableType";
+	private static final String QUERY_BY_CONTEXT__TYPE = "finalPrivacyByContextType";
 	private static final String CONTEXT_ID = "contextId";
 	private static final String USER_ID = "userId";
 	private static final String RECORD_TYPE = "recordType";
@@ -72,18 +74,47 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
 
 	public Map getViewableState(String contextId, String recordType)
 	{
-		// TODO Auto-generated method stub
+  	if(contextId == null || recordType == null)
+  	{
+      throw new IllegalArgumentException("Null Argument in getViewableState");
+  	}
+
+  	List returnedList = getPrivacyByContextAndType(contextId, recordType);
+  	if(returnedList != null)
+  	{
+  		HashMap returnMap = new HashMap(); 
+			PrivacyRecord pr;
+  		for(int i=0; i<returnedList.size(); i++)
+  		{
+  			pr = (PrivacyRecord)returnedList.get(i);
+  			returnMap.put(pr.getUserId(), new Boolean(pr.getViewable()));
+  		}
+  		return returnMap;
+  	}
 		return null;
 	}
 
 	public boolean isViewable(String contextId, String userId)
 	{
-		// TODO Auto-generated method stub
+		if(contextId == null || userId == null)
+		{
+			throw new IllegalArgumentException("Null Argument in isViewable");
+		}
+
+		//TODO: call getPrivacy(conextId, userId, PrivacyManager.SYSTEM_RECORD_TYPE)
+		//or getPrivacy(conextId, userId, PrivacyManager.USER_RECORD_TYPE)
+		//and add business logic in here
+		
 		return true;
 	}
 
 	public void setViewableState(String contextId, String userId, Boolean value, String recordType)
 	{
+		if (contextId == null || userId == null || value == null || recordType == null)
+		{
+			throw new IllegalArgumentException("Null Argument in setViewableState");
+		}
+		
 		PrivacyRecord pr = getPrivacy(contextId, userId, recordType);
 		if(pr != null)
 		{
@@ -98,13 +129,25 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
 
 	public void setViewableState(String contextId, Map userViewableState, String recordType)
 	{
-		// TODO Auto-generated method stub
+		if (contextId == null || userViewableState == null || recordType == null)
+		{
+			throw new IllegalArgumentException("Null Argument in setViewableState");
+		}
+		
+		Set keySet = userViewableState.keySet();
+		Iterator iter = keySet.iterator();
+		while(iter.hasNext())
+		{
+			String userId = (String)iter.next();
+			Boolean viewable = (Boolean) userViewableState.get(userId);
+			setViewableState(contextId, userId, viewable, recordType);
+		}
 	}
 
 	
 	private PrivacyRecord getPrivacy(final String contextId, final String userId, final String recordType)
 	{
-		if (contextId == null)
+		if (contextId == null || userId == null || recordType == null)
 		{
 			throw new IllegalArgumentException("Null Argument in getPrivacy");
 		}
@@ -197,6 +240,28 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
     };
 
     return (List) getHibernateTemplate().execute(hcb); 
+  }
+  
+  private List getPrivacyByContextAndType(final String contextId, final String recordType)
+  {
+  	if(contextId == null || recordType == null)
+  	{
+  		throw new IllegalArgumentException("Null Argument in getPrivacyByContextAndType");
+  	}
+  	
+  	HibernateCallback hcb = new HibernateCallback()
+  	{
+  		public Object doInHibernate(Session session) throws HibernateException,
+  		    SQLException
+  		{
+        Query q = session.getNamedQuery(QUERY_BY_CONTEXT__TYPE);
+        q.setParameter("contextId", contextId, Hibernate.STRING);
+        q.setParameter("recordType", recordType, Hibernate.STRING);
+        return q.list();
+  		}
+  	};
+  	
+  	return (List) getHibernateTemplate().executeFind(hcb);
   }
   
   private void savePrivacyRecord(PrivacyRecord privacy)

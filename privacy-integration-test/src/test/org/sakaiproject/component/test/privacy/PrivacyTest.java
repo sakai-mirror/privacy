@@ -88,6 +88,27 @@ public class PrivacyTest extends SakaiTestBase
 			PrivacyRecord pr = (PrivacyRecord)iter.next();
 			log.info("PrivacyRecord -- " + pr.getContextId() + ":" + pr.getUserId() + ":" + pr.getRecordType() + ":" + pr.getViewable());
 		}
-		
+	}
+	
+	public void testGetViewableState2() throws Exception
+	{
+		Map returnedMap = privacyManager.getViewableState("main_page", PrivacyManager.USER_RECORD_TYPE);
+		Set keySet = returnedMap.keySet();
+		Iterator iter = keySet.iterator();
+		while(iter.hasNext())
+		{
+			String userId = (String)iter.next();
+			Boolean bl = (Boolean)returnedMap.get(userId);
+			log.info("testGetViewableState2 -- " + "main_page:" + PrivacyManager.USER_RECORD_TYPE + ":" + userId + ":" + bl.booleanValue());
+		}
+	}
+	
+	public void testSetViewableState2() throws Exception
+	{
+		Map inputMap = new HashMap();
+		inputMap.put("a", new Boolean(false));
+		inputMap.put("b", new Boolean(true));
+		inputMap.put("c", new Boolean(true));
+		privacyManager.setViewableState("main_page", inputMap, PrivacyManager.USER_RECORD_TYPE);
 	}
 }
