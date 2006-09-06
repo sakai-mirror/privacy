@@ -87,5 +87,5 @@ public interface PrivacyManager
 	 * @param recordType is a UUID i.e. (getSystemRecordType(), getUserRecordType())
 	 */
 	void setViewableState(String contextId, Map userViewableState, String recordType);
-            
+	
 }

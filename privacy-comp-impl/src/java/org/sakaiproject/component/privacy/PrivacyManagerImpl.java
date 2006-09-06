@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.HashSet;
 import java.util.HashMap;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -22,6 +24,8 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyManager
 {
+	private static Log log = LogFactory.getLog(PrivacyManagerImpl.class);
+	
 	private static final String QUERY_BY_USERID_CONTEXTID_TYPEID = "findPrivacyByUserIdContextIdType";
 	private static final String QUERY_BY_DISABLED_USERID_CONTEXTID = "findDisabledPrivacyUserIdContextIdType";
 	private static final String QUERY_BY_CONTEXT_VIEWABLE_TYPE = "finalPrivacyByContextViewableType";
@@ -30,6 +34,10 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
 	private static final String USER_ID = "userId";
 	private static final String RECORD_TYPE = "recordType";
 	private static final String VIEWABLE = "viewable";
+	
+	protected boolean defaultViewable = true;
+	protected Boolean overrideViewable = null;
+	protected boolean userRecordHasPrecedence = true;
 
 	public Set findViewable(String contextId, Set userIds)
 	{
@@ -274,4 +282,45 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
     getHibernateTemplate().delete(o);
   }
 
+	/**
+	 * A 'true' value will set privacy enabled for a user whose privacy settings
+	 * are not known. A 'false' value will set privacy disabled for a user whose
+	 * privacy settings are not known (i.e. no data found).
+	 * 
+	 * The default behavior will be to show users or make them viewable.
+	 * 
+	 * @param defaultViewable
+	 *          the defaultViewable to set
+	 */
+	public void setDefaultViewable(boolean defaultViewable)
+	{
+		this.defaultViewable = defaultViewable;
+	}
+
+	/**
+	 * A 'true' value will make all users viewable in the system. A 'false' value
+	 * will make all users hidden in the system.
+	 * 
+	 * Do not set this value for normal operation (non overridden behavior; i.e. null).
+	 * 
+	 * @param overrideViewable
+	 *          the overrideViewable to set
+	 */
+	public void setOverrideViewable(Boolean overrideViewable)
+	{
+		this.overrideViewable = overrideViewable;
+	}
+
+	/**
+	 * A 'true' value indicates that a user record has precedence over a system
+	 * record. A 'false' value indicates that a system record has precedence over
+	 * a user record
+	 * 
+	 * @param userRecordHasPrecedence
+	 *          the userRecordHasPrecedence to set
+	 */
+	public void setUserRecordHasPrecedence(boolean userRecordHasPrecedence)
+	{
+		this.userRecordHasPrecedence = userRecordHasPrecedence;
+	}
 }

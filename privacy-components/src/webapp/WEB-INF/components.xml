@@ -12,13 +12,14 @@
 		</property>
 	</bean>
 
-	<bean id="org.sakaiproject.api.privacy.PrivacyManager"
+<!--	<bean id="org.sakaiproject.api.privacy.PrivacyManager"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		
 		<property name="transactionManager">
 			<ref bean="org.sakaiproject.springframework.orm.hibernate.GlobalTransactionManager" />
 		</property>
 		<property name="target">
-			<bean
+			<bean id="org.sakaiproject.component.privacy.PrivacyManagerImpl"
 				class="org.sakaiproject.component.privacy.PrivacyManagerImpl"
 				singleton="true">
 				<property name="sessionFactory">
@@ -32,6 +33,29 @@
 				<prop key="*">PROPAGATION_REQUIRED</prop>
 			</props>
 		</property>
+	</bean>-->
+
+  <bean id="org.sakaiproject.component.privacy.PrivacyManagerImpl"
+	  class="org.sakaiproject.component.privacy.PrivacyManagerImpl"
+		singleton="true">
+		<property name="sessionFactory">
+		 <ref
+			 bean="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
+		</property>
 	</bean>
 	
+	<bean id="org.sakaiproject.api.privacy.PrivacyManager"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="org.sakaiproject.springframework.orm.hibernate.GlobalTransactionManager" />
+		</property>
+		<property name="target">
+		  <ref bean="org.sakaiproject.component.privacy.PrivacyManagerImpl" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>	
 </beans>
