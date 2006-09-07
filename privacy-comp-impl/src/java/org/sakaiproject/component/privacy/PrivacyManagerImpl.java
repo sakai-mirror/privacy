@@ -46,14 +46,22 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
 			throw new IllegalArgumentException("Null Argument in findViewable");
 		}
 
+		if(overrideViewable!=null)
+		{
+			if(overrideViewable.booleanValue())
+				return new HashSet();
+			else
+				return userIds;
+		}
+		
 		Iterator iter = userIds.iterator();
 		Set returnSet = new HashSet();
 		while(iter.hasNext())
 		{
 			String userId = (String) iter.next();
-			PrivacyRecord pr = getDisabledPrivacy(contextId, userId); 
-			if(pr != null)
-				returnSet.add(pr);
+			String returnUser = getDisabledPrivacy(contextId, userId); 
+			if(returnUser != null)
+				returnSet.add(returnUser);
 		}
 		
 		return returnSet;
@@ -72,7 +80,7 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
 			Set returnSet = new HashSet();
 			for(int i=0; i<returnedList.size(); i++)
 			{
-				returnSet.add((PrivacyRecord)returnedList.get(i));
+				returnSet.add(((PrivacyRecord)returnedList.get(i)).getUserId());
 			}
 			return returnSet;
 		}
@@ -108,12 +116,18 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
 		{
 			throw new IllegalArgumentException("Null Argument in isViewable");
 		}
-
-		//TODO: call getPrivacy(conextId, userId, PrivacyManager.SYSTEM_RECORD_TYPE)
-		//or getPrivacy(conextId, userId, PrivacyManager.USER_RECORD_TYPE)
-		//and add business logic in here
 		
-		return true;
+		if(overrideViewable != null)
+		{
+			return overrideViewable.booleanValue();
+		}
+		else
+		{
+			PrivacyRecord sysRecord = getPrivacy(contextId, userId, PrivacyManager.SYSTEM_RECORD_TYPE);
+			PrivacyRecord userRecord = getPrivacy(contextId, userId, PrivacyManager.USER_RECORD_TYPE);
+			
+			return checkPrivacyRecord(sysRecord, userRecord);
+		}
 	}
 
 	public void setViewableState(String contextId, String userId, Boolean value, String recordType)
@@ -178,39 +192,42 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
 	}
 
 	
-	private PrivacyRecord getDisabledPrivacy(final String contextId, final String userId)
+	private String getDisabledPrivacy(final String contextId, final String userId)
 	{
 		if (contextId == null || userId == null)
 		{
 			throw new IllegalArgumentException("Null Argument in getDisabledPrivacy");
 		}
-
-		return findPrivacyWithFullArg(contextId, userId, PrivacyManager.USER_RECORD_TYPE, new Boolean(false));
-
+		PrivacyRecord sysRecord = getPrivacy(contextId, userId, PrivacyManager.SYSTEM_RECORD_TYPE);
+		PrivacyRecord userRecord = getPrivacy(contextId, userId, PrivacyManager.USER_RECORD_TYPE);
+		if(!checkPrivacyRecord(sysRecord, userRecord))
+			return userId;
+		else
+			return null;
 	}
 	
-	private PrivacyRecord findPrivacyWithFullArg(final String contextId, final String userId, final String recordType, final Boolean viewable)
-	{
-		if (contextId == null || userId == null || recordType == null || viewable == null)
-		{
-			throw new IllegalArgumentException("Null Argument in findPrivacyWithFullArg");
-		}
-		HibernateCallback hcb = new HibernateCallback()
-		{
-			public Object doInHibernate(Session session) throws HibernateException,
-			SQLException
-			{
-        Query q = session.getNamedQuery(QUERY_BY_DISABLED_USERID_CONTEXTID);
-        q.setParameter(USER_ID, userId, Hibernate.STRING);
-        q.setParameter(CONTEXT_ID, contextId, Hibernate.STRING);
-        q.setParameter(RECORD_TYPE, recordType, Hibernate.STRING);
-        q.setParameter(VIEWABLE, viewable, Hibernate.BOOLEAN);
-        return q.uniqueResult();
-			}
-		};
-
-		return (PrivacyRecord) getHibernateTemplate().execute(hcb);
-	}
+//	private PrivacyRecord findPrivacyWithFullArg(final String contextId, final String userId, final String recordType, final Boolean viewable)
+//	{
+//		if (contextId == null || userId == null || recordType == null || viewable == null)
+//		{
+//			throw new IllegalArgumentException("Null Argument in findPrivacyWithFullArg");
+//		}
+//		HibernateCallback hcb = new HibernateCallback()
+//		{
+//			public Object doInHibernate(Session session) throws HibernateException,
+//			SQLException
+//			{
+//        Query q = session.getNamedQuery(QUERY_BY_DISABLED_USERID_CONTEXTID);
+//        q.setParameter(USER_ID, userId, Hibernate.STRING);
+//        q.setParameter(CONTEXT_ID, contextId, Hibernate.STRING);
+//        q.setParameter(RECORD_TYPE, recordType, Hibernate.STRING);
+//        q.setParameter(VIEWABLE, viewable, Hibernate.BOOLEAN);
+//        return q.uniqueResult();
+//			}
+//		};
+//
+//		return (PrivacyRecord) getHibernateTemplate().execute(hcb);
+//	}
 
   private PrivacyRecord createPrivacyRecord(final String userId, 
   		final String contextId, final String recordType, final boolean viewable)
@@ -281,7 +298,35 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
   {
     getHibernateTemplate().delete(o);
   }
-
+  
+  private boolean checkPrivacyRecord(PrivacyRecord sysRecord, PrivacyRecord userRecord)
+  {
+		if(sysRecord != null && userRecord != null)
+		{
+			if(userRecordHasPrecedence)
+			{
+				return userRecord.getViewable();
+			}
+			else
+				return sysRecord.getViewable();
+		}
+		else if(sysRecord == null && userRecord == null)
+		{
+			if(defaultViewable)
+				return true;
+			else
+				return false;
+		}
+		else if(sysRecord != null)
+		{
+			return sysRecord.getViewable();
+		}
+		else
+		{
+			return userRecord.getViewable();
+		}
+  }
+  
 	/**
 	 * A 'true' value will set privacy enabled for a user whose privacy settings
 	 * are not known. A 'false' value will set privacy disabled for a user whose

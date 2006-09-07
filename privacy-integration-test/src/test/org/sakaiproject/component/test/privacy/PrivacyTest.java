@@ -70,12 +70,13 @@ public class PrivacyTest extends SakaiTestBase
 		inputSet.add("a");
 		inputSet.add("b");
 		inputSet.add("c");
+		inputSet.add("d");
 		Set resultSet = privacyManager.findViewable("main_page", inputSet);
 		Iterator iter = resultSet.iterator();
 		while(iter.hasNext())
 		{
-			PrivacyRecord pr = (PrivacyRecord)iter.next();
-			log.info("PrivacyRecord -- " + pr.getContextId() + ":" + pr.getUserId() + ":" + pr.getRecordType() + ":" + pr.getViewable());
+			String user = (String)iter.next();
+			log.info("Hidden users -- maing_page: " + user);
 		}
 	}
 	
@@ -85,8 +86,8 @@ public class PrivacyTest extends SakaiTestBase
 		Iterator iter = resultSet.iterator();
 		while(iter.hasNext())
 		{
-			PrivacyRecord pr = (PrivacyRecord)iter.next();
-			log.info("PrivacyRecord -- " + pr.getContextId() + ":" + pr.getUserId() + ":" + pr.getRecordType() + ":" + pr.getViewable());
+			String user = (String)iter.next();
+			log.info("PrivacyRecord -- main_page1:" + PrivacyManager.SYSTEM_RECORD_TYPE + ":" + user);
 		}
 	}
 	
@@ -110,5 +111,11 @@ public class PrivacyTest extends SakaiTestBase
 		inputMap.put("b", new Boolean(true));
 		inputMap.put("c", new Boolean(true));
 		privacyManager.setViewableState("main_page", inputMap, PrivacyManager.USER_RECORD_TYPE);
+	}
+	
+	public void testIsViewable() throws Exception
+	{
+		log.info("Privacy Test -- testIsView:");
+		log.info(new Boolean(privacyManager.isViewable("main_page", "a")).toString());
 	}
 }
