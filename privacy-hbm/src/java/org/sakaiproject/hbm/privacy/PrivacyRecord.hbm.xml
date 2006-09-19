@@ -18,11 +18,11 @@
         
     <version name="lockId" />               
 
-    <property name="contextId" column="contextId" type="string" not-null="true"  unique-key="uniquePrivacyRecord"/>
+    <property name="contextId" column="contextId" type="string" not-null="true"  unique-key="uniquePrivacyRecord" length="100"/>
 
-    <property name="recordType" column="recordType" type="string" not-null="true" unique-key="uniquePrivacyRecord"/>
+    <property name="recordType" column="recordType" type="string" not-null="true" unique-key="uniquePrivacyRecord" length="100"/>
 
-    <property name="userId" column="userId" type="string" not-null="true" unique-key="uniquePrivacyRecord"/>
+    <property name="userId" column="userId" type="string" not-null="true" unique-key="uniquePrivacyRecord" length="100"/>
 
     <property name="viewable" column="viewable" type="boolean" not-null="true"/>
 
