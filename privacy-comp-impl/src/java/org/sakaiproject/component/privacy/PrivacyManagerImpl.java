@@ -62,7 +62,7 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
 				return userIds;
 		}
 		
-		Iterator iter = userIds.iterator();
+/*		Iterator iter = userIds.iterator();
 		Set returnSet = new HashSet();
 		while(iter.hasNext())
 		{
@@ -70,6 +70,57 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
 			String returnUser = getDisabledPrivacy(contextId, userId); 
 			if(returnUser != null)
 				returnSet.add(returnUser);
+		}*/
+
+		Iterator iter = userIds.iterator();
+		List userIdList = new ArrayList();
+		while(iter.hasNext())
+		{
+			String userId = (String) iter.next();
+			if(userId != null)
+				userIdList.add(userId);
+		}
+
+		Map sysMap = new HashMap();
+		Map userMap = new HashMap();
+		List pieceList = new ArrayList();
+		List resultPieceList = new ArrayList();
+		for(int i=0; i <= (int)(userIdList.size() / maxResultSetNumber); i++)
+		{
+			pieceList.clear();
+			if(i == (int)(userIdList.size() / maxResultSetNumber))
+			{
+				for(int j=0; j<(userIdList.size() % maxResultSetNumber); j++)
+				{
+					pieceList.add(userIdList.get(j + ((int)i*maxResultSetNumber)));
+				}
+			}
+			else
+			{
+				for(int j=0; j<maxResultSetNumber; j++)
+				{
+					pieceList.add(userIdList.get(j + ((int)i*maxResultSetNumber)));
+				}
+			}
+
+			if(pieceList.size() > 0)
+			{
+				resultPieceList = getPrivacyByContextAndTypeAndUserIds(contextId, PrivacyManager.SYSTEM_RECORD_TYPE, pieceList);
+				for(int j=0; j<resultPieceList.size(); j++)
+					sysMap.put(((PrivacyRecord)resultPieceList.get(j)).getUserId(), (PrivacyRecord)resultPieceList.get(j));
+
+				resultPieceList = getPrivacyByContextAndTypeAndUserIds(contextId, PrivacyManager.USER_RECORD_TYPE, pieceList);
+				for(int j=0; j<resultPieceList.size(); j++)
+					userMap.put(((PrivacyRecord)resultPieceList.get(j)).getUserId(), (PrivacyRecord)resultPieceList.get(j));
+			}
+		}
+		
+		Set returnSet = new HashSet();
+		for(int i=0; i<userIdList.size(); i++)
+		{
+			String id = (String) userIdList.get(i);
+			if(getDisabled((PrivacyRecord)sysMap.get(id), (PrivacyRecord)userMap.get(id)))
+				returnSet.add(id);
 		}
 		
 		return returnSet;
@@ -298,6 +349,14 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
 			return userId;
 		else
 			return null;
+	}
+	
+	private boolean getDisabled(PrivacyRecord sysRecord, PrivacyRecord userRecord)
+	{
+		if(!checkPrivacyRecord(sysRecord, userRecord))
+			return true;
+		else
+			return false;
 	}
 	
 //	private PrivacyRecord findPrivacyWithFullArg(final String contextId, final String userId, final String recordType, final Boolean viewable)
