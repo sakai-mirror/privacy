@@ -43,13 +43,20 @@ public interface PrivacyManager
 	public boolean isViewable(String contextId, String userId);
             
 	/**
-	 * Get a set of users who have privacy disabled within a context
+	 * Get a set of users who have privacy disabled within a context. (Visible)
 	 * @param contextId
 	 * @param userIds
 	 * @return Set of <code>org.sakakproject.service.legacy.User.id</code> objects (UUID)
 	 */
 	Set findViewable(String contextId, Set userIds);
-
+	
+	/**
+	 * Get a set of users who have privacy enabled within a context. (Hidden)
+	 * @param contextId
+	 * @param userIds
+	 * @return Set of <code>org.sakakproject.service.legacy.User.id</code> objects (UUID)
+	 */
+	Set findHidden(String contextId, Set userIds);
 
 	// Batch / Privacy Management methods --------------------------------
 	

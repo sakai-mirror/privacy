@@ -1,8 +1,6 @@
 package org.sakaiproject.hbm.privacy;
 
-import org.sakaiproject.api.privacy.PrivacyRecord;
-
-public class PrivacyRecordImpl implements PrivacyRecord
+public class PrivacyRecordImpl
 {
   private Long surrogateKey;
 	private Integer lockId;

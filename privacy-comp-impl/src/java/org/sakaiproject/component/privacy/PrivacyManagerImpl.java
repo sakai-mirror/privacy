@@ -16,7 +16,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.sakaiproject.api.privacy.PrivacyManager;
-import org.sakaiproject.api.privacy.PrivacyRecord;
 import org.sakaiproject.hbm.privacy.PrivacyRecordImpl;
 import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.cover.UserDirectoryService;
@@ -57,21 +56,11 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
 		if(overrideViewable!=null)
 		{
 			if(overrideViewable.booleanValue())
-				return new HashSet();
-			else
 				return userIds;
+			else
+				return new HashSet();
 		}
 		
-/*		Iterator iter = userIds.iterator();
-		Set returnSet = new HashSet();
-		while(iter.hasNext())
-		{
-			String userId = (String) iter.next();
-			String returnUser = getDisabledPrivacy(contextId, userId); 
-			if(returnUser != null)
-				returnSet.add(returnUser);
-		}*/
-
 		Iterator iter = userIds.iterator();
 		List userIdList = new ArrayList();
 		while(iter.hasNext())
@@ -107,11 +96,11 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
 			{
 				resultPieceList = getPrivacyByContextAndTypeAndUserIds(contextId, PrivacyManager.SYSTEM_RECORD_TYPE, pieceList);
 				for(int j=0; j<resultPieceList.size(); j++)
-					sysMap.put(((PrivacyRecord)resultPieceList.get(j)).getUserId(), (PrivacyRecord)resultPieceList.get(j));
+					sysMap.put(((PrivacyRecordImpl)resultPieceList.get(j)).getUserId(), (PrivacyRecordImpl)resultPieceList.get(j));
 
 				resultPieceList = getPrivacyByContextAndTypeAndUserIds(contextId, PrivacyManager.USER_RECORD_TYPE, pieceList);
 				for(int j=0; j<resultPieceList.size(); j++)
-					userMap.put(((PrivacyRecord)resultPieceList.get(j)).getUserId(), (PrivacyRecord)resultPieceList.get(j));
+					userMap.put(((PrivacyRecordImpl)resultPieceList.get(j)).getUserId(), (PrivacyRecordImpl)resultPieceList.get(j));
 			}
 		}
 		
@@ -119,7 +108,76 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
 		for(int i=0; i<userIdList.size(); i++)
 		{
 			String id = (String) userIdList.get(i);
-			if(getDisabled((PrivacyRecord)sysMap.get(id), (PrivacyRecord)userMap.get(id)))
+			if(!getDisabled((PrivacyRecordImpl)sysMap.get(id), (PrivacyRecordImpl)userMap.get(id)))
+				returnSet.add(id);
+		}
+		
+		return returnSet;
+	}
+
+	public Set findHidden(String contextId, Set userIds)
+	{
+		if (contextId == null || userIds == null)
+		{
+			throw new IllegalArgumentException("Null Argument in findViewable");
+		}
+
+		if(overrideViewable!=null)
+		{
+			if(overrideViewable.booleanValue())
+				return new HashSet();
+			else
+				return userIds;
+		}
+		
+		Iterator iter = userIds.iterator();
+		List userIdList = new ArrayList();
+		while(iter.hasNext())
+		{
+			String userId = (String) iter.next();
+			if(userId != null)
+				userIdList.add(userId);
+		}
+
+		Map sysMap = new HashMap();
+		Map userMap = new HashMap();
+		List pieceList = new ArrayList();
+		List resultPieceList = new ArrayList();
+		for(int i=0; i <= (int)(userIdList.size() / maxResultSetNumber); i++)
+		{
+			pieceList.clear();
+			if(i == (int)(userIdList.size() / maxResultSetNumber))
+			{
+				for(int j=0; j<(userIdList.size() % maxResultSetNumber); j++)
+				{
+					pieceList.add(userIdList.get(j + ((int)i*maxResultSetNumber)));
+				}
+			}
+			else
+			{
+				for(int j=0; j<maxResultSetNumber; j++)
+				{
+					pieceList.add(userIdList.get(j + ((int)i*maxResultSetNumber)));
+				}
+			}
+
+			if(pieceList.size() > 0)
+			{
+				resultPieceList = getPrivacyByContextAndTypeAndUserIds(contextId, PrivacyManager.SYSTEM_RECORD_TYPE, pieceList);
+				for(int j=0; j<resultPieceList.size(); j++)
+					sysMap.put(((PrivacyRecordImpl)resultPieceList.get(j)).getUserId(), (PrivacyRecordImpl)resultPieceList.get(j));
+
+				resultPieceList = getPrivacyByContextAndTypeAndUserIds(contextId, PrivacyManager.USER_RECORD_TYPE, pieceList);
+				for(int j=0; j<resultPieceList.size(); j++)
+					userMap.put(((PrivacyRecordImpl)resultPieceList.get(j)).getUserId(), (PrivacyRecordImpl)resultPieceList.get(j));
+			}
+		}
+		
+		Set returnSet = new HashSet();
+		for(int i=0; i<userIdList.size(); i++)
+		{
+			String id = (String) userIdList.get(i);
+			if(getDisabled((PrivacyRecordImpl)sysMap.get(id), (PrivacyRecordImpl)userMap.get(id)))
 				returnSet.add(id);
 		}
 		
@@ -177,7 +235,7 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
   			Set returnSet = new HashSet();
   			for(int i=0; i<returnedList.size(); i++)
   			{
-  				returnSet.add(((PrivacyRecord)returnedList.get(i)).getUserId());
+  				returnSet.add(((PrivacyRecordImpl)returnedList.get(i)).getUserId());
   			}
   			return returnSet;
   		}
@@ -239,10 +297,10 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
   		if(returnedList != null)
   		{
   			HashMap returnMap = new HashMap(); 
-  			PrivacyRecord pr;
+  			PrivacyRecordImpl pr;
   			for(int i=0; i<returnedList.size(); i++)
   			{
-  				pr = (PrivacyRecord)returnedList.get(i);
+  				pr = (PrivacyRecordImpl)returnedList.get(i);
   				returnMap.put(pr.getUserId(), new Boolean(pr.getViewable()));
   			}
   			return returnMap;
@@ -268,8 +326,8 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
 		}
 		else
 		{
-			PrivacyRecord sysRecord = getPrivacy(contextId, userId, PrivacyManager.SYSTEM_RECORD_TYPE);
-			PrivacyRecord userRecord = getPrivacy(contextId, userId, PrivacyManager.USER_RECORD_TYPE);
+			PrivacyRecordImpl sysRecord = getPrivacy(contextId, userId, PrivacyManager.SYSTEM_RECORD_TYPE);
+			PrivacyRecordImpl userRecord = getPrivacy(contextId, userId, PrivacyManager.USER_RECORD_TYPE);
 			
 			return checkPrivacyRecord(sysRecord, userRecord);
 		}
@@ -282,7 +340,7 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
 			throw new IllegalArgumentException("Null Argument in setViewableState");
 		}
 		
-		PrivacyRecord pr = getPrivacy(contextId, userId, recordType);
+		PrivacyRecordImpl pr = getPrivacy(contextId, userId, recordType);
 		if(pr != null)
 		{
 			pr.setViewable(value.booleanValue());
@@ -312,7 +370,7 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
 	}
 
 	
-	private PrivacyRecord getPrivacy(final String contextId, final String userId, final String recordType)
+	private PrivacyRecordImpl getPrivacy(final String contextId, final String userId, final String recordType)
 	{
 		if (contextId == null || userId == null || recordType == null)
 		{
@@ -332,7 +390,7 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
 			}
 		};
 
-		return (PrivacyRecord) getHibernateTemplate().execute(hcb);
+		return (PrivacyRecordImpl) getHibernateTemplate().execute(hcb);
 
 	}
 
@@ -343,15 +401,15 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
 		{
 			throw new IllegalArgumentException("Null Argument in getDisabledPrivacy");
 		}
-		PrivacyRecord sysRecord = getPrivacy(contextId, userId, PrivacyManager.SYSTEM_RECORD_TYPE);
-		PrivacyRecord userRecord = getPrivacy(contextId, userId, PrivacyManager.USER_RECORD_TYPE);
+		PrivacyRecordImpl sysRecord = getPrivacy(contextId, userId, PrivacyManager.SYSTEM_RECORD_TYPE);
+		PrivacyRecordImpl userRecord = getPrivacy(contextId, userId, PrivacyManager.USER_RECORD_TYPE);
 		if(!checkPrivacyRecord(sysRecord, userRecord))
 			return userId;
 		else
 			return null;
 	}
 	
-	private boolean getDisabled(PrivacyRecord sysRecord, PrivacyRecord userRecord)
+	private boolean getDisabled(PrivacyRecordImpl sysRecord, PrivacyRecordImpl userRecord)
 	{
 		if(!checkPrivacyRecord(sysRecord, userRecord))
 			return true;
@@ -382,7 +440,7 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
 //		return (PrivacyRecord) getHibernateTemplate().execute(hcb);
 //	}
 
-  private PrivacyRecord createPrivacyRecord(final String userId, 
+  private PrivacyRecordImpl createPrivacyRecord(final String userId, 
   		final String contextId, final String recordType, final boolean viewable)
   {
     if (userId == null || contextId == null || recordType == null )
@@ -391,7 +449,7 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
     }
     else
     {
-      PrivacyRecord privacy = new PrivacyRecordImpl(userId, contextId, recordType, viewable);      
+      PrivacyRecordImpl privacy = new PrivacyRecordImpl(userId, contextId, recordType, viewable);      
       savePrivacyRecord(privacy);
       return privacy;
     }
@@ -489,17 +547,17 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
   	return (List) getHibernateTemplate().executeFind(hcb);
   }
 
-  private void savePrivacyRecord(PrivacyRecord privacy)
+  private void savePrivacyRecord(PrivacyRecordImpl privacy)
   {
   	getHibernateTemplate().saveOrUpdate(privacy);
   }
 
-  private void removePrivacyObject(PrivacyRecord o)
+  private void removePrivacyObject(PrivacyRecordImpl o)
   {
     getHibernateTemplate().delete(o);
   }
   
-  private boolean checkPrivacyRecord(PrivacyRecord sysRecord, PrivacyRecord userRecord)
+  private boolean checkPrivacyRecord(PrivacyRecordImpl sysRecord, PrivacyRecordImpl userRecord)
   {
 		if(sysRecord != null && userRecord != null)
 		{
