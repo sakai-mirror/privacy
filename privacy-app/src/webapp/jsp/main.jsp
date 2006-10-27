@@ -52,7 +52,7 @@
  	  <h:outputText value="#{msgs.privacy_change_directions2}" />
       <f:verbatim></div></f:verbatim>
      
-      <h:selectBooleanCheckbox value="#{changeStatus}" />
+      <h:selectBooleanCheckbox value="#{privacyBean.changeStatus}" id="statusChange" />
       <h:outputText value="#{privacyBean.checkboxText}" />
       <f:verbatim><br /><br /></f:verbatim>
 

@@ -7,8 +7,9 @@ import java.util.ResourceBundle;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
+import javax.faces.component.UISelectBoolean;
+import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
@@ -156,22 +157,25 @@ public class PrivacyBean {
 	 * 		String for navigation
 	 */
 	public String processUpdate() {
-		// TODO: determine whether Show or Hide and process accordingly
-		if ("Show Me".equals(checkboxText)) {
-			if (isMyWorkspace()) {
-				processShow(curSite);
-			}
+		if (changeStatus) {
+			if ("Show Me".equals(checkboxText)) {
+				if (isMyWorkspace()) {
+					processShow(curSite);
+				}
+				else {
+					processShow(getSiteId());
+				}
+			} 
 			else {
-				processShow(getSiteId());
+				if (isMyWorkspace()) {
+					processHide(curSite);
+				}
+				else {
+					processHide(getSiteId());
+				}
 			}
-		} 
-		else {
-			if (isMyWorkspace()) {
-				processHide(curSite);
-			}
-			else {
-				processHide(getSiteId());
-			}
+			
+			changeStatus=false;
 		}
 		
 		return "main";
