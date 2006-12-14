@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>master</artifactId>
+    <groupId>org.sakaiproject</groupId>
+    <version>M2</version>
+    <relativePath>../master/pom.xml</relativePath>
+  </parent>
+  <name>Sakai Privacy Project</name>
+  <groupId>org.sakaiproject</groupId>
+  <artifactId>privacy-base</artifactId>
+  <packaging>pom</packaging>
+  <modules>
+    <module>privacy-api</module>
+    <module>privacy-comp-impl</module>
+    <module>privacy-components</module>
+    <module>privacy-hbm</module>
+    <module>privacy-integration-test</module>
+  </modules>
+</project>
