@@ -354,6 +354,16 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
 		}
 	}
 
+	public boolean userMadeSelection(String contextId, String userId){
+		if(contextId == null || userId == null)
+		{
+			throw new IllegalArgumentException("Null Argument in isViewable");
+		}
+		PrivacyRecordImpl userRecord = getPrivacy(contextId, userId, PrivacyManager.USER_RECORD_TYPE);
+			
+		return (userRecord == null ? false : true);
+	}
+	
 	public void setViewableState(String contextId, String userId, Boolean value, String recordType)
 	{
 		if (contextId == null || userId == null || value == null || recordType == null)
