@@ -64,6 +64,15 @@ public interface PrivacyManager
 	public boolean isViewable(String contextId, String userId);
             
 	/**
+	 * Determine if a user has specifically made a choice.
+	 * @param contextId
+	 * @param userId (UUID)
+	 * @return true if user made a privacy decision
+	 */
+	public boolean userMadeSelection(String contextId, String userId);
+
+	
+	/**
 	 * Get a set of users who have privacy disabled within a context. (Visible)
 	 * @param contextId
 	 * @param userIds
