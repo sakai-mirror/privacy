@@ -11,14 +11,11 @@
   <groupId>org.sakaiproject</groupId>
   <artifactId>privacy-base</artifactId>
   <packaging>pom</packaging>
-  
   <scm>
     <connection>scm:svn:https://source.sakaiproject.org/svn/privacy/trunk</connection>
     <developerConnection>scm:svn:https://source.sakaiproject.org/svn/privacy/trunk</developerConnection>
     <url>https://source.sakaiproject.org/svn/privacy/trunk</url>
   </scm>
-  
-
   <modules>
     <module>privacy-api</module>
     <module>privacy-comp-impl</module>

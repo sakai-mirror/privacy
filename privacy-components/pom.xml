@@ -25,10 +25,10 @@
       <artifactId>sakai-privacy-impl</artifactId>
       <version>${sakai.version}</version>
       <exclusions>
-	<exclusion>
-      		<groupId>org.sakaiproject</groupId>
-      		<artifactId>sakai-privacy-hbm</artifactId>
-	</exclusion>
+        <exclusion>
+          <groupId>org.sakaiproject</groupId>
+          <artifactId>sakai-privacy-hbm</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
   </dependencies>
