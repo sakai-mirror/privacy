@@ -43,12 +43,12 @@
     <dependency>
       <groupId>org.sakaiproject</groupId>
       <artifactId>sakai-privacy-api</artifactId>
-      <version>${sakai.version}</version>
+
     </dependency>
     <dependency>
       <groupId>org.sakaiproject</groupId>
       <artifactId>sakai-privacy-hbm</artifactId>
-      <version>${sakai.version}</version>
+
     </dependency>
 <!--${sakai.hibernate.groupId}${sakai.hibernate.artifactId}${sakai.hibernate.version}-->
 <!--org.sakaiprojectsakai-authz-api${sakai.version}-->
