@@ -413,11 +413,13 @@ public class PrivacyManagerImpl extends HibernateDaoSupport implements PrivacyMa
 			public Object doInHibernate(Session session) throws HibernateException,
 			SQLException
 			{
-        Query q = session.getNamedQuery(QUERY_BY_USERID_CONTEXTID_TYPEID);
-        q.setParameter(CONTEXT_ID, contextId, Hibernate.STRING);
-        q.setParameter(USER_ID, userId, Hibernate.STRING);
-        q.setParameter(RECORD_TYPE, recordType, Hibernate.STRING);
-        return q.uniqueResult();
+				Query q = session.getNamedQuery(QUERY_BY_USERID_CONTEXTID_TYPEID);
+				q.setCacheable(true);
+				q.setCacheRegion("org.sakaiproject.api.privacy.PrivacyManager.PrivacyQueryCache.queryGetPrivacy");
+				q.setParameter(CONTEXT_ID, contextId, Hibernate.STRING);
+				q.setParameter(USER_ID, userId, Hibernate.STRING);
+				q.setParameter(RECORD_TYPE, recordType, Hibernate.STRING);
+				return q.uniqueResult();
 			}
 		};
 
