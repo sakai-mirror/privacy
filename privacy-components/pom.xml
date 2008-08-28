@@ -23,7 +23,6 @@
     <dependency>
       <groupId>org.sakaiproject</groupId>
       <artifactId>sakai-privacy-impl</artifactId>
-      
       <exclusions>
         <exclusion>
           <groupId>org.sakaiproject</groupId>
