@@ -7,6 +7,7 @@
   <classpathentry kind="var" path="M2_REPO/asm/asm-attrs/1.5.3/asm-attrs-1.5.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/backport-util-concurrent/backport-util-concurrent/3.0/backport-util-concurrent-3.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/cglib/cglib/2.1_3/cglib-2.1_3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.4/commons-codec-1.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-collections/commons-collections/3.1/commons-collections-3.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar"/>
@@ -14,8 +15,16 @@
   <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate/3.2.5.ga/hibernate-3.2.5.ga.jar"/>
   <classpathentry kind="var" path="M2_REPO/net/sf/jsr107cache/jsr107cache/1.0/jsr107cache-1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/sakaiproject/kernel/sakai-kernel-api/1.0.12/sakai-kernel-api-1.0.12.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/sakaiproject/kernel/sakai-kernel-util/1.0.12/sakai-kernel-util-1.0.12.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/sakaiproject/kernel/sakai-kernel-api/1.0.16/sakai-kernel-api-1.0.16.jar" sourcepath="M2_REPO/org/sakaiproject/kernel/sakai-kernel-api/1.0.16/sakai-kernel-api-1.0.16-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/arwhyte/.m2/repository/org/sakaiproject/kernel/sakai-kernel-api/1.0.16/sakai-kernel-api-1.0.16-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/sakaiproject/kernel/sakai-kernel-util/1.0.16/sakai-kernel-util-1.0.16.jar" sourcepath="M2_REPO/org/sakaiproject/kernel/sakai-kernel-util/1.0.16/sakai-kernel-util-1.0.16-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/arwhyte/.m2/repository/org/sakaiproject/kernel/sakai-kernel-util/1.0.16/sakai-kernel-util-1.0.16-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
   <classpathentry kind="src" path="/sakai-privacy-api"/>
   <classpathentry kind="src" path="/sakai-privacy-hbm"/>
   <classpathentry kind="var" path="M2_REPO/org/springframework/spring/2.0.6/spring-2.0.6.jar"/>
